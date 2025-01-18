@@ -68,7 +68,7 @@ If set to `true` DevTools will be opened automatically on application startup. I
 
 ### Example configuration
 
-```json
+```jsonc
 {
     "exit_after": 300,                                 // Complete 'update' after 5 minutes.
     "time_function": "logarithmic",                    // Calculate progress using the logarithmic function.
