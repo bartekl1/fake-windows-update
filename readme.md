@@ -5,16 +5,21 @@ Fake Windows Update is a prank application that simulates a Windows Update scree
 > [!WARNING]
 > This project is still under development
 
+> [!CAUTION]
+> This project uses Windows API to block keyboard and mouse input. It may not work on some systems or may cause problems. \
+> **Use it at your own risk!**
+
 ## TODO
 
 - [ ] Add more update screens (currently only Windows 10 is available)
-- [ ] Add English support (currently only Polish is available)
-- [ ] Improve update screen and make it more realistic
-- [ ] Increment progress
-- [ ] Exit after some time
+- [x] Add English support (currently only Polish is available)
+- [ ] Improve update screen and make it more realistic (partially done)
+- [x] Increment progress
+- [x] Exit after some time
 - [ ] Improve input blocking
 - [ ] Add customization
 - [ ] Single executable file
+- [ ] Multi monitor support
 
 ## Running
 

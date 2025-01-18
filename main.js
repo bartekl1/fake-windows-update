@@ -12,6 +12,24 @@ if (fse.existsSync(path.join(app.getAppPath(), "configs.json"))) {
 const disable_blocking = configs.disable_blocking || false;
 const open_dev_tools = configs.open_dev_tools || false;
 
+function isElevated() {
+    try {
+        child_process.execFileSync("net", ["session"], {"stdio": "ignore"});
+        return true;
+    } catch ( e ) {
+        return false;
+    }
+}
+
+function restartAsAdmin() {
+    const exe_path = process.argv0;
+    const args = process.argv.slice(1);
+    const command = "powershell.exe -Command Start-Process -Verb RunAs -FilePath " + exe_path + " -ArgumentList " + args.map(arg => '"' + arg + '"').join(" ");
+    child_process.execSync(command);
+    app.quit();
+    process.exit();
+}
+
 const createWindow = () => {
     const mainWindow = new BrowserWindow({
         fullscreen: !disable_blocking,
@@ -48,6 +66,10 @@ const createWindow = () => {
 };
 
 var block_input_process;
+
+if (!disable_blocking && !isElevated()) {
+    restartAsAdmin();
+}
 
 app.whenReady().then(() => {
     ipcMain.on("exit", (_event) => {
