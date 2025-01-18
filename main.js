@@ -1,41 +1,66 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const child_process = require("child_process");
 const path = require("path");
+const fse = require("fs-extra");
+
+var configs;
+if (fse.existsSync(path.join(app.getAppPath(), "configs.json"))) {
+    configs = fse.readJsonSync(path.join(app.getAppPath(), "configs.json"));
+} else {
+    configs = {};
+}
+const disable_blocking = configs.disable_blocking || false;
+const open_dev_tools = configs.open_dev_tools || false;
 
 const createWindow = () => {
     const mainWindow = new BrowserWindow({
-        fullscreen: true,
-        alwaysOnTop: true,
-        frame: false,
-        skipTaskbar: true,
-        transparent: true,
+        fullscreen: !disable_blocking,
+        alwaysOnTop: !disable_blocking,
+        frame: disable_blocking,
+        skipTaskbar: !disable_blocking,
+        transparent: !disable_blocking,
         webPreferences: {
-            contextIsolation: false,
+            // contextIsolation: false,
+            preload: path.join(app.getAppPath(), "preload.js"),
         },
+        width: 1000,
+        height: 800,
     });
 
     mainWindow.setMenuBarVisibility(false);
-    mainWindow.setAlwaysOnTop(true, "screen-saver");
+    if (!disable_blocking) mainWindow.setAlwaysOnTop(true, "screen-saver");
 
-    mainWindow.loadFile("win10.html");
+    mainWindow.loadFile("windows10/index.html");
 
-    mainWindow.on("blur", () => {
-        mainWindow.focus();
-    });
+    if (!disable_blocking) {
+        mainWindow.on("blur", () => {
+            mainWindow.focus();
+        });
 
-    setInterval(() => {
-        mainWindow.setAlwaysOnTop(true, "screen-saver");
-    }, 1000);
+        setInterval(() => {
+            mainWindow.setAlwaysOnTop(true, "screen-saver");
+        }, 1000);
+    }
 
-    // mainWindow.webContents.openDevTools()
+    if (open_dev_tools) mainWindow.webContents.openDevTools();
+
+    mainWindow.webContents.send("configs", configs);
 };
 
+var block_input_process;
+
 app.whenReady().then(() => {
+    ipcMain.on("exit", (_event) => {
+        if (!disable_blocking) block_input_process.kill();
+        app.quit();
+    });
     createWindow();
 
-    const block_input_exe_path = path.join(app.getAppPath(), "block_input.exe");
-    child_process.spawn(block_input_exe_path, {
-        detached: true,
-        stdio: "ignore",
-    });
+    if (!disable_blocking) {
+        const block_input_exe_path = path.join(app.getAppPath(), "block_input.exe");
+        block_input_process = child_process.spawn(block_input_exe_path, {
+            detached: true,
+            stdio: "ignore",
+        });
+    }
 });

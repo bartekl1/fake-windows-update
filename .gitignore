@@ -137,3 +137,5 @@ dist
 
 
 block_input.exe
+config.json
+configs.json
