@@ -24,7 +24,7 @@ function isElevated() {
 function restartAsAdmin() {
     const exe_path = process.argv0;
     const args = process.argv.slice(1);
-    const command = "powershell.exe -Command Start-Process -Verb RunAs -FilePath " + exe_path + " -ArgumentList " + args.map(arg => '"' + arg + '"').join(" ");
+    const command = "powershell.exe -Command \"Start-Process -Verb RunAs -FilePath \\\"" + exe_path + "\\\"" + ((args.length > 0) ? (" -ArgumentList " + args.map(arg => '\\"' + arg + '\\"').join(", ")) : "") + "\"";
     child_process.execSync(command);
     app.quit();
     process.exit();
