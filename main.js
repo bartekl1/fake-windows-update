@@ -3,9 +3,10 @@ const child_process = require("child_process");
 const path = require("path");
 const fse = require("fs-extra");
 
+const configsPath = path.join(app.isPackaged ? path.dirname(app.getPath("exe")) : app.getAppPath(), "configs.json")
 var configs;
-if (fse.existsSync(path.join(app.getAppPath(), "configs.json"))) {
-    configs = fse.readJsonSync(path.join(app.getAppPath(), "configs.json"));
+if (fse.existsSync(configsPath)) {
+    configs = fse.readJsonSync(configsPath);
 } else {
     configs = {};
 }
