@@ -1,5 +1,6 @@
 module.exports = {
     packagerConfig: {
+        icon: "img/WindowsUpdate",
         ignore: ["configs.json"],
     },
     rebuildConfig: {},

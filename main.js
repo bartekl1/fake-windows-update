@@ -39,11 +39,11 @@ const createWindow = () => {
         skipTaskbar: !disable_blocking,
         transparent: !disable_blocking,
         webPreferences: {
-            // contextIsolation: false,
             preload: path.join(app.getAppPath(), "preload.js"),
         },
         width: 1000,
         height: 800,
+        icon: "img/WindowsUpdate.ico",
     });
 
     mainWindow.setMenuBarVisibility(false);
