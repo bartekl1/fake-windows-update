@@ -75,6 +75,7 @@ if (!disable_blocking && !isElevated()) {
 app.whenReady().then(() => {
     ipcMain.on("exit", (_event) => {
         if (!disable_blocking) block_input_process.kill();
+        if (configs.command_after_completed) child_process.execSync(configs.command_after_completed);
         app.quit();
     });
     createWindow();
