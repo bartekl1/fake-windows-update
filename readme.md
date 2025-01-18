@@ -12,16 +12,73 @@ Fake Windows Update is a prank application that simulates a Windows Update scree
 ## TODO
 
 - [ ] Add more update screens (currently only Windows 10 is available)
-- [x] Add English support (currently only Polish is available)
 - [ ] Improve update screen and make it more realistic (partially done)
-- [x] Increment progress
-- [x] Exit after some time
 - [ ] Improve input blocking
 - [ ] Add customization
 - [ ] Single executable file
 - [ ] Multi monitor support
 
-## Running
+## Configuration
+
+The application can be configured by adding a `configs.json` file to the application directory.
+
+### Configuration options
+
+The following configuration options are available. All options are optional.
+
+#### `exit_after` - integer
+
+Time in seconds after which the ‘update’ should be completed and the application should be closed. Using this option will cause increasing progress. By default, the application will never automatically close and progress will be constantly set to 0%.
+
+#### `time_function` - string
+
+Function for calculating progress against time. The following options are available `linear`, `quadratic`, `logarithmic`. This option requires the `exit_after` option. Default is `linear`.
+
+Progress is calculated using the following formulas ($P$ is progress, $t$ is elapsed time and $t_C$ is total time):
+
+##### `linear`
+
+$$ P = \max(\min( 100 \frac{t}{t_C}, 100), 0) $$
+From function:
+$$ P = 100 \frac{t}{t_C} $$
+
+##### `quadratic`
+
+$$ P = \min(100 \frac{\max(t,0)^2}{{t_C}^2}, 100) $$
+From function:
+$$ P = 100 \frac{t^2}{{t_C}^2} $$
+
+##### `logarithmic`
+
+$$ P = \min(100 \log_{t_C}(\max(t, 1)), 100) $$
+From function:
+$$ P = 100 \log_{t_C}t $$
+
+#### `command_after_completed` - string
+
+The command to execute after the ‘update’ has been completed. By default, no command is executed.
+
+#### `disable_blocking` - boolean
+
+If set to `true` keyboard and mouse input is not blocked, the window is not opened fullscreen and on the top. Default is `false`.
+
+#### `open_dev_tools` - boolean
+
+If set to `true` DevTools will be opened automatically on application startup. If `false` DevTools can be opened manually using <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd>. Default is `false`.
+
+### Example configuration
+
+```json
+{
+    "exit_after": 300,                                 // Complete 'update' after 5 minutes.
+    "time_function": "logarithmic",                    // Calculate progress using the logarithmic function.
+    "command_after_completed": "shutdown -r -t 0",     // Reboot computer after 'update' is completed
+    "disable_blocking": false,                         // Block keyboard and mouse input, open application fullscreen and on the top.
+    "open_dev_tools": false                            // Do not open DevTools automatically.
+}
+```
+
+## Running from source code
 
 1. You need to have [Node.js](https://nodejs.org) and g++ (or any other C++ compiler) installed on your computer.
 
